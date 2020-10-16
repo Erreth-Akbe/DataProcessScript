@@ -103,7 +103,6 @@ def getStationDict(peopleType, now):
     return fourStationDict[peopleType][week]
 
 def getStationList(peopleType, weekType):
-    print("people:   "+ str(peopleType) + "    weekType:   " + str(weekType))
     return fourStationList[peopleType][weekType]
 
 
@@ -148,18 +147,20 @@ def inputAdvanceData(tables, cardno, datetime, staname, line, datetimein, stain,
     #print(tmp)
     tables.append(tmp)
 
-def inputStationData(fourStationDict, fourStationList, beginTime, now, peopleType):
-    dic = getStationDict(peopleType, now)
-    weekType = getWeekType(now)
-    tables = getStationList(peopleType, weekType)
-    tmp = []
-    tmp.append(beginTime)
-    tmp.append(now)
-    for station in dic:
-        tmp.append(station[0])
-        tmp.append(station[1])
-    #print(tmp)
-    tables.append(tmp)
+def inputStationData(fourStationDict, fourStationList, beginTime, now):
+    
+    for peopleType in range(0, 4):
+        for weekType in range(0, 2):
+            tables = getStationList(peopleType, weekType)
+            dic = getStationDict(peopleType, now)
+            tmp = []
+            tmp.append(beginTime)
+            tmp.append(now)
+            for station in dic:
+                tmp.append(station[0])
+                tmp.append(station[1])
+            #print(tmp)
+            tables.append(tmp)
 
 yearBench = 2014
 beginTime = convertDate('20140317055456')
@@ -184,7 +185,7 @@ for i in range(0, 6):
             handleNull(id, allDict)
             handleStationNull(stationId, getStationDict(0, now))
             if now-beginTime >= ONEHOURTIME:
-                inputStationData(fourStationDict, fourStationList, beginTime, now, 0)
+                inputStationData(fourStationDict, fourStationList, beginTime, now)
                 beginTime = now
                 initDict(fourStationDict)
             processHourlyStation(fourStationDict, stationId, now, row['inout'], 0)
@@ -200,10 +201,6 @@ for i in range(0, 6):
                 handleNull(id, getNomalDict(type))
                 handleNull(id, getAdvanceDict(type))
                 handleStationNull(stationId, getStationDict(type, now))
-                if now-beginTime >= ONEHOURTIME:
-                    inputStationData(fourStationDict, fourStationList, beginTime, now, type)
-                    beginTime = now
-                    initDict(fourStationDict)
                 processHourlyStation(fourStationDict, stationId, now, row['inout'], type)
                 inputNomalData(getNomalDict(type)[id], row['cardno'], row['datetime'], row['line'], row['staname'], row['inout'], row['cardsort'])
                 if row['stain'] != '':
@@ -235,8 +232,6 @@ for i in range(1, 4):
             for row in tables:
                 csv_writter.writerow(row)
 
-print(fourStationList[2][1])
-print("????")
 for i in range(1, 4):
     for j in range(0, 2):
         filename = '.csv'
