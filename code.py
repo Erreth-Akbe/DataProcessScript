@@ -76,10 +76,44 @@ def getPeopleName(type):
     elif type == 3:
         return "student"
 
-def getWeekName(type):
+def getIsChangeType(table):
+    if table == []:
+        return 0
+    stain = table[0][5]
+    staout = table[0][2]
+#    print(table[0])
+#    print(table[0][5])
+#    print(table[0][2])
+    inChange = False
+    outChange = False
+    for row in table:
+        if stain != row[5]:
+            inChange = True
+        if staout != row[2]:
+            outChange = True
+    if inChange == False and outChange == False:
+        return 0
+    elif inChange and outChange == False:
+        return 1
+    elif inChange == False and outChange:
+        return 2
+    elif inChange and outChange:
+        return 3
+
+def getIsChangeName(table):
+    type = getIsChangeType(table)
     if type == 0:
-        return 'workday'
+        return "notChange"
     elif type == 1:
+        return "inChange"
+    elif type == 2:
+        return "outChange"
+    elif type == 3:
+        return "allChange"
+def getWeekName(isChangetType):
+    if isChangetType == 0:
+        return 'workday'
+    elif isChangetType == 1:
         return 'weekend'
 
 
@@ -189,13 +223,6 @@ for i in range(0, 6):
                 beginTime = now
                 initDict(fourStationDict)
             processHourlyStation(fourStationDict, stationId, now, row['inout'], 0)
-            '''
-            if getHourlyChime(convertDate(row['datetime']))  == beginTime:
-                print("yes"+str(getHourlyChime(convertDate(row['datetime']))))
-            if getHourlyChime(convertDate(row['datetime']))  != beginTime:
-                print("nononono"+str(getHourlyChime(convertDate(row['datetime']))))
-            '''
-
             # process three types
             if type != -1 :
                 handleNull(id, getNomalDict(type))
@@ -233,8 +260,19 @@ for i in range(1, 4):
                 csv_writter.writerow(row)
 
 for i in range(1, 4):
+    filenameprefix = "./data/out/"+getPeopleName(i)+"/"
+    for key in getAdvanceDict(i):
+           tables = getAdvanceDict(i)[key]
+           filename = filenameprefix+getIsChangeName(tables)+".csv";
+           with open(filename, mode='w') as csv_tmp:
+                csv_writter = csv.writer(csv_tmp, delimiter=',')
+                for row in tables:
+                    csv_writter.writerow(row)
+for i in range(1, 4):
     for j in range(0, 2):
         filename = '.csv'
+#        print(getPeopleName(i))
+#        print(getWeekName(j))
         with open("./data/out/"+getPeopleName(i)+"/"+getWeekName(j)+"/(3)"+filename, mode='w') as csv_tmp:
             csv_writter = csv.writer(csv_tmp, delimiter=',')
             firstRow = [ 'beginTime', 'endTime']
