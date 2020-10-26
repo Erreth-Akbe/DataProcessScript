@@ -243,33 +243,33 @@ for year in range(2014, 2020):
                                         row['datetimein'], row['stain'], row['linein'], int(row['datetime'])-int(row['datetimein']), row['cardsort'])
             
         csv_tmp.close()
-        for j in range(1, 4):
-            filename = str(year)+".csv"
-            pathName4 = "./data/out/"+getPeopleName(j)+"/4_chain/"
-            if os.path.isdir(pathName4) == False:
-                os.mkdir(pathName4)
-            with open(pathName4+filename, mode='w') as csv_to_write:
+    for j in range(1, 4):
+        filename = str(year)+".csv"
+        pathName4 = "./data/out/"+getPeopleName(j)+"/4_chain/"
+        if os.path.isdir(pathName4) == False:
+            os.mkdir(pathName4)
+        with open(pathName4+filename, mode='w') as csv_to_write:
+            csv_writter = csv.writer(csv_to_write, delimiter=',')
+            firstRow = [ 'cardno', 'datetime', 'staname', 'line', 'datetimein', 'stain', 'linein', 'gap', 'cardsort']
+            csv_writter.writerow(firstRow)
+            for key in getAdvanceDict(i):
+                tables = getAdvanceDict(i)[key]
+                for row in tables:
+                    csv_writter.writerow(row)
+            csv_to_write.close()
+        pathName5 = "./data/out/"+getPeopleName(j)+"/5_isChange/"
+        if os.path.isdir(pathName5) == False:
+            os.mkdir(pathName5)
+        for key in getAdvanceDict(j):
+            tables = getAdvanceDict(j)[key]
+            filename = pathName5+getIsChangeName(tables)+str(year)+".csv";
+            with open(filename, mode='w') as csv_to_write:
                 csv_writter = csv.writer(csv_to_write, delimiter=',')
-                firstRow = [ 'cardno', 'datetime', 'staname', 'line', 'datetimein', 'stain', 'linein', 'gap', 'cardsort']
-                csv_writter.writerow(firstRow)
-                for key in getAdvanceDict(i):
-                    tables = getAdvanceDict(i)[key]
-                    for row in tables:
-                        csv_writter.writerow(row)
+                for row in tables:
+                    csv_writter.writerow(row)
                 csv_to_write.close()
-            pathName5 = "./data/out/"+getPeopleName(j)+"/5_isChange/"
-            if os.path.isdir(pathName5) == False:
-                os.mkdir(pathName5)
-            for key in getAdvanceDict(j):
-                tables = getAdvanceDict(j)[key]
-                filename = pathName5+getIsChangeName(tables)+str(year)+".csv";
-                with open(filename, mode='w') as csv_to_write:
-                    csv_writter = csv.writer(csv_to_write, delimiter=',')
-                    for row in tables:
-                        csv_writter.writerow(row)
-                    csv_to_write.close()
-            for key in getAdvanceDict(j):
-                getAdvanceDict(j)[key] = []
+        for key in getAdvanceDict(j):
+            getAdvanceDict(j)[key] = []
 
 print("----------load finish---------")
 
