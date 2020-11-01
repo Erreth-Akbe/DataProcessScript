@@ -2,16 +2,61 @@ import csv
 from datetime import datetime
 from datetime import timedelta
 
+timesInOneWeek = dict()
+isWorkMoning = dict()
+isWorkToday = dict()
+# 这个地方是两个字典，里面hash的AB站点组合
+isWorkMan = dict()
+workPlace = dict()
+homePlace = dict()
+MAXSTATIONNUMBER = 1000
+def handelTimesInOneWeekNull(id, timesInOneWeek):
+    if id not in timesInOneWeek:
+        timesInOneWeek[id] = 0
+    return
+
+def handelIsWorkTodayNull(id, isWorkToday):
+    if id not in isWorkToday:
+        isWorkToday[id] = False
+    return
+
+def handelisWorkManNull(id, isWorkMan):
+    if  id not in isWorkMan:
+        isWorkMan[id] = False
+    return
+
+def handelIsWorkMENull(id, isME):
+    if id not in isME:
+        isME[id] = dict()
+    return
+
+def initOneWeek(timesInOneWeek):
+    for id in timesInOneWeek:
+        timesInOneWeek[id] = 0
+    return
+
+def initOneDay(isWorkToday):
+    for id in isWorkToday:
+        isWorkToday[id] = False
+    return
+
+def initisWorkME(isworkM):
+    isworkM.clear()
+    return
+        
+
+def getDay(date):
+    return date[0:7]
+
+def getHashAB(stain, staout):
+    return int(stain)*MAXSTATIONNUMBER+int(staout)
+def getInverseHashAB(stain, staout):
+    return int(stain)*MAXSTATIONNUMBER+int(staout)
+
 def convertDate(date):
     time = datetime.strptime(date, '%Y%m%d%H%M%S')
     return time
 
-def initDict(fourStationDict):
-    for people in fourStationDict:
-        for week in people:
-            for station in week:
-                for inout in station:
-                    inout = 0
 
 def getPeopleType(cardsort):
     if cardsort == 0:
@@ -24,10 +69,10 @@ def getPeopleType(cardsort):
         return 3
     return -1
 
-def isWorkTime(datetime,stain, staout):
-    hour = int(datetime[8:10])
-    minute = int(datetime[10:12])
-    second = int(datetime[12:14])
+def isWorkTime(date):
+    hour = int(date[8:10])
+    minute = int(date[10:12])
+    second = int(date[12:14])
     timeType = 2
     if hour >=5 and hour <= 10:
         timeType = 0
@@ -43,7 +88,20 @@ def getPeopleName(type):
         return "disable"
     elif type == 3:
         return "student"
-
+def getHourlyChime(dt, step=0):
+    """
+    计算整小时的时间
+    :param step: 往前或往后跳跃取整值，默认为0，即当前所在的时间，正数为往后，负数往前。
+                例如：
+                step = 0 时 2019-04-11 17:38:21.869993 取整秒后为 2019-04-11 17:38:21
+                step = 1 时 2019-04-11 17:38:21.869993 取整秒后为 2019-04-11 17:38:22
+                step = -1 时 2019-04-11 17:38:21.869993 取整秒后为 2019-04-11 17:38:20
+    :return: 整理后的时间戳
+    """
+    # 整小时
+    td = timedelta(days=0, seconds=dt.second, microseconds=dt.microsecond, milliseconds=0, minutes=dt.minute, hours=-step, weeks=0)
+    new_dt = dt - td
+    return new_dt
 def getIsChangeType(table):  
     if table == []:
         return 0
@@ -87,7 +145,7 @@ def getWeekType(now):
     type = 0
     if week >= 0 and week <= 4:
         type =  0
-    elif weel > 4 and week <= 6:
+    elif week > 4 and week <= 6:
         type = 1
     return type
 
@@ -161,45 +219,86 @@ def inputStationData(fourStationDict, fourStationList, beginTime, now):
             #print(tmp)
             tables.append(tmp)
 
-yearBench = 2014
-beginTime = convertDate('20140317055456')
-first = True
+def isChangeDay(date, lastDay):
+    if getDay(date) != getDay(lastDay):
+        return True
+    else:
+        return False
+
+def isChangeWeek(now, lastWeekType):
+    nowWeekType = getWeekType(now)
+    if (nowWeekType == 1):
+        return False
+    elif (nowWeekType == 0 and lastWeekType == 0):
+        return False
+    else:
+        return True
+
+def changeDay(isWorkToday, timesInOneWeek):
+    for id in isWorkToday:
+        if isWorkToday[id]:
+            handelTimesInOneWeekNull(id, timesInOneWeek)
+            timesInOneWeek[id] += 1
+    initOneDay(isWorkToday)
+    return
+
+def changeWeek(timesInOneWeek, isWorkMan):
+    for id in timesInOneWeek:
+        if timesInOneWeek[id] >= 3:
+            handelisWorkManNull(id, isWorkMan)
+            isWorkMan[id] = True
+    initOneWeek(timesInOneWeek)
+    return
+
+
+
 # preprocess find who is workman
 # 打工人，打工魂，打工都是人上人
-for i in range(0, 6):
-    filename = ""
-    filename += "en_ex_"
-    filename += str(i+yearBench)
+lastDay = getDay('20140317055456')
+beginTime = convertDate('20140317055456')
+lastWeekType = getWeekType(beginTime)
+first = True
+for year in range(2014, 2020):
+    filename = "en_ex_"
+    filename += str(year)
     filename += "03.csv"
-    with open("./testdata/"+filename, mode='r') as csv_tmp:
+    with open("./data/"+filename, mode='r') as csv_tmp:
         csv_reader = csv.DictReader(csv_tmp,fieldnames=['cardno','payno','datetime','line','staname','inout','cardsort','datetimein','linein','stain'])
         
         for row in csv_reader:
             if first:
                 first = False
                 beginTime = getHourlyChime(convertDate(row['datetime']))
-                initDict(fourStationDict)
-            now =  getHourlyChime(convertDate(row['datetime']))
+                lastDay = getDay(row['datetime'])
+                lastWeekType = getWeekType(beginTime)
+            date = row['datetime']
+            now = convertDate(date)
+            nowType =  getWeekType(convertDate(row['datetime']))
             id = row['cardno']
-            type = getPeopleType(row['cardsort'])
-            stationId = row['staname']
-            handleNull(id, allDict)
-            handleStationNull(stationId, getStationDict(0, now))
-            if now-beginTime >= ONEHOURTIME:
-                inputStationData(fourStationDict, fourStationList, beginTime, now)
-                beginTime = now
-                initDict(fourStationDict)
-            processHourlyStation(fourStationDict, stationId, now, row['inout'], 0)
-            # process three types
-            if type != -1 :
-                handleNull(id, getNomalDict(type))
-                handleNull(id, getAdvanceDict(type))
-                handleStationNull(stationId, getStationDict(type, now))
-                processHourlyStation(fourStationDict, stationId, now, row['inout'], type)
-                inputNomalData(getNomalDict(type)[id], row['cardno'], row['datetime'], row['line'], row['staname'], row['inout'], row['cardsort'])
-                if row['stain'] != '':
-                    inputAdvanceData(getAdvanceDict(type)[id], row['cardno'],  row['datetime'], row['staname'], row['line'], 
-                                        row['datetimein'], row['stain'], row['linein'], int(row['datetime'])-int(row['datetimein']), row['cardsort'])
-
+            staname = row['staname']
+            stain = row['stain']
+            timeType = isWorkTime(date)
+            if stain == '':
+                continue
+            if timeType == 0:
+                handelIsWorkMENull(id, isWorkMoning)
+                isWorkMoning[id][getHashAB(stain, staname)] = True
+            elif timeType == 1:
+                if id in isWorkMoning and getInverseHashAB(stain, staname) in isWorkMoning[id] and isWorkMoning[id][getInverseHashAB(stain, staname)]:
+                    handelIsWorkTodayNull(id, isWorkToday)
+                    isWorkToday[id] = True
+                    workPlace[id] = stain
+                    homePlace[id] = staname
+            
+            if isChangeDay(date, lastDay):
+                changeDay(isWorkToday, timesInOneWeek)
+            if isChangeWeek(now, lastWeekType):
+                changeweek(timesInOneWeek, isWorkMan)
+            lastDay = getDay(date)
+            lastWeekType - getWeekType(now)
         csv_tmp.close()
-print("----------load finish---------")
+  
+
+print("----------preprocess Finished---------")
+for id in isWorkMan:
+    print(isWorkMan[id])
