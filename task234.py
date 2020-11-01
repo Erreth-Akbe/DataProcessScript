@@ -131,7 +131,7 @@ def getWeekType(now):
     type = 0
     if week >= 0 and week <= 4:
         type =  0
-    elif weel > 4 and week <= 6:
+    elif week > 4 and week <= 6:
         type = 1
     return type
 
@@ -212,7 +212,7 @@ for year in range(2014, 2020):
     filename += "en_ex_"
     filename += str(year)
     filename += "03.csv"
-    with open("./testdata/"+filename, mode='r') as csv_tmp:
+    with open("./data/"+filename, mode='r') as csv_tmp:
         csv_reader = csv.DictReader(csv_tmp,fieldnames=['cardno','payno','datetime','line','staname','inout','cardsort','datetimein','linein','stain'])
         
         for row in csv_reader:
