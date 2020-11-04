@@ -17,7 +17,7 @@ for year in range(2014, 2020):
     filename = "en_ex_"
     filename += str(year)
     filename += "03.csv"
-    with open("./data/"+filename, mode='r') as csv_tmp:
+    with open("./sortedTestData/"+filename, mode='r') as csv_tmp:
         csv_reader = csv.DictReader(csv_tmp,fieldnames=['cardno','payno','datetime','line','staname','inout','cardsort','datetimein','linein','stain'])
         for row in csv_reader:
             now = getDay(row['datetime'])
@@ -25,3 +25,4 @@ for year in range(2014, 2020):
                 print("error")
             lastDay = now
         csv_tmp.close()
+        

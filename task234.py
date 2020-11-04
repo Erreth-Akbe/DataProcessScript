@@ -214,12 +214,12 @@ for people in fourStationDict:
 
 beginTime = convertDate('20140317055456')
 first = True
-for year in range(2014, 2020):
+for year in range(2014, 2019):
     filename = ""
     filename += "en_ex_"
     filename += str(year)
     filename += "03.csv"
-    with open("./data/"+filename, mode='r') as csv_tmp:
+    with open("./sortedData/"+filename, mode='r') as csv_tmp:
         csv_reader = csv.DictReader(csv_tmp,fieldnames=['cardno','payno','datetime','line','staname','inout','cardsort','datetimein','linein','stain'])
         
         for row in csv_reader:
@@ -255,7 +255,7 @@ for year in range(2014, 2020):
         pathName4 = "./data/out/"+getPeopleName(j)+"/4_chain/"
         if os.path.isdir(pathName4) == False:
             os.mkdir(pathName4)
-        with open(pathName4+filename, mode='w') as csv_to_write:
+        with open(pathName4+filename, mode='w',newline='') as csv_to_write:
             csv_writter = csv.writer(csv_to_write, delimiter=',')
             firstRow = [ 'cardno', 'datetime', 'staname', 'line', 'datetimein', 'stain', 'linein', 'gap', 'cardsort']
             csv_writter.writerow(firstRow)
@@ -270,7 +270,7 @@ for year in range(2014, 2020):
         for key in getAdvanceDict(j):
             tables = getAdvanceDict(j)[key]
             filename = pathName5+getIsChangeName(tables)+str(year)+".csv";
-            with open(filename, mode='w') as csv_to_write:
+            with open(filename, mode='w',newline='') as csv_to_write:
                 csv_writter = csv.writer(csv_to_write, delimiter=',')
                 for row in tables:
                     csv_writter.writerow(row)
@@ -282,7 +282,7 @@ print("----------load finish---------")
 
 for i in range(1, 4):
     filename = '(1)原始卡号数据.csv'
-    with open("./data/out/"+getPeopleName(i)+"/"+filename, mode='w') as csv_tmp:
+    with open("./data/out/"+getPeopleName(i)+"/"+filename, mode='w',newline='') as csv_tmp:
         csv_writter = csv.writer(csv_tmp, delimiter=',')
         firstRow = ['cardno', 'datetime', 'line', 'staname', 'inout', 'cardsort']
         csv_writter.writerow(firstRow)
@@ -299,7 +299,7 @@ for i in range(1, 4):
         filename = '.csv'
 #        print(getPeopleName(i))
 #        print(getWeekName(j))
-        with open("./data/out/"+getPeopleName(i)+"/"+getWeekName(j)+"/(3)"+filename, mode='w') as csv_tmp:
+        with open("./data/out/"+getPeopleName(i)+"/"+getWeekName(j)+"/(3)"+filename, mode='w',newline='') as csv_tmp:
             csv_writter = csv.writer(csv_tmp, delimiter=',')
             firstRow = [ 'beginTime', 'endTime']
             for key in fourStationDict[i][j]:

@@ -14,7 +14,7 @@ for i in range(0, 6):
         for row in csv_reader:
             tmp.append(row)
             lines += 1
-            if lines > 10000: 
+            if lines > 1000000: 
                 break
         csv_tmp.close()
     files.append(tmp)
@@ -25,9 +25,8 @@ for i in range(0, 6):
     filename += "en_ex_"
     filename += str(i+yearBench)
     filename += "03.csv"
-    with open("./testdata/"+filename, mode='w') as csv_tmp:
+    with open("./testdata/"+filename, mode='w',newline='') as csv_tmp:
         csv_writter = csv.writer(csv_tmp, delimiter=',')
         for row in files[i]:
             csv_writter.writerow(row)
-        
         
