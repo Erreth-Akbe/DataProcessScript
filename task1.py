@@ -340,7 +340,7 @@ for year in range(2014, 2020):
                 lastDay = getDay(row['datetime'])
                 lastWeekType = getWeekType(beginTime)
             date = row['datetime']
-            now = convertDate(date)
+            now =  getHourlyChime(convertDate(row['datetime']))
             nowType =  getWeekType(convertDate(row['datetime']))
             id = row['cardno']
             staname = row['staname']
@@ -384,6 +384,7 @@ for year in range(2014, 2020):
                     handleNull(id, workManAdvanceDict)
                     inputAdvanceData(workManAdvanceDict[id], row['cardno'], homePlace, workPlace,  row['cardsort'], morningin, morningout, row['datetimein'],  row['datetime'])
                     processHourlyStation(workManStationDict, stationId, now, row['inout'])
+                    
             if isChangeDay(date, lastDay):
                 print("changeDay")
                 changeDay(isWorkToday, timesInOneWeek, isWorkMorning, workManMoringData)
