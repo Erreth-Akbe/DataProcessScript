@@ -214,7 +214,7 @@ for people in fourStationDict:
 
 beginTime = convertDate('20140317055456')
 first = True
-for year in range(2014, 2019):
+for year in range(2014, 2020):
     filename = ""
     filename += "en_ex_"
     filename += str(year)
