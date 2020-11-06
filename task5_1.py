@@ -144,7 +144,7 @@ for year in range(2014, 2020):
     filename = "en_ex_"
     filename += str(year)
     filename += "03.csv"
-    with open("./sortedData/"+filename, mode='r') as csv_tmp:
+    with open("./sortedTestData/"+filename, mode='r') as csv_tmp:
         csv_reader = csv.DictReader(csv_tmp,fieldnames=['cardno','payno','datetime','line','staname','inout','cardsort','datetimein','linein','stain'])
         for row in csv_reader:
             if first:
@@ -159,9 +159,8 @@ for year in range(2014, 2020):
             staname = row['staname']
             stain = row['stain']
             stationId = row['staname']
+            processHourlyStation(StationDict, stationId, now, row['inout'])
 #            print(row)
-            if stain == '':
-                continue
             '''
             if id in isWorkMorning:
                 print("id in")
@@ -172,7 +171,6 @@ for year in range(2014, 2020):
                 print(date)
             '''
            
-            processHourlyStation(StationDict, stationId, now, row['inout'])
             if now-beginTime >= HALFHOURTIME:
                 inputStationData(StationDict,StationList, beginTime, now)
                 beginTime = now
