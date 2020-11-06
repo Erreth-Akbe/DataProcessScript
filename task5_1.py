@@ -17,9 +17,11 @@ for j in range(0, 2):
     StationList.append([])
 
 ONEHOUREND = datetime.strptime("2020010101000", '%Y%m%d%H%M%S')
+HALFHOUREND = datetime.strptime("2020010100300", '%Y%m%d%H%M%S')
 ONEHOURBEGIN = datetime.strptime("2020010100000", '%Y%m%d%H%M%S')
 ONEHOURTIME = ONEHOUREND-ONEHOURBEGIN
-print(ONEHOURTIME)
+HALFHOURTIME = HALFHOUREND-ONEHOURBEGIN
+print(HALFHOURTIME)
 
 
         
@@ -51,7 +53,23 @@ def getHourlyChime(dt, step=0):
     td = timedelta(days=0, seconds=dt.second, microseconds=dt.microsecond, milliseconds=0, minutes=dt.minute, hours=-step, weeks=0)
     new_dt = dt - td
     return new_dt
-
+def getHalfHourlyChime(dt, step=0):
+    """
+    计算整小时的时间
+    :param step: 往前或往后跳跃取整值，默认为0，即当前所在的时间，正数为往后，负数往前。
+                例如：
+                step = 0 时 2019-04-11 17:38:21.869993 取整秒后为 2019-04-11 17:38:21
+                step = 1 时 2019-04-11 17:38:21.869993 取整秒后为 2019-04-11 17:38:22
+                step = -1 时 2019-04-11 17:38:21.869993 取整秒后为 2019-04-11 17:38:20
+    :return: 整理后的时间戳
+    """
+    # 整小时
+    td = timedelta(days=0, seconds=dt.second, microseconds=dt.microsecond, milliseconds=0, minutes=dt.minute, hours=-step, weeks=0)
+    new_dt = dt - td
+    if dt-new_dt >= HALFHOURTIME:
+        return new_dt+HALFHOURTIME
+    else:
+        return new_dt
 def getWeekName(isChangetType):
     if isChangetType == 0:
         return 'workday'
@@ -131,11 +149,11 @@ for year in range(2014, 2020):
         for row in csv_reader:
             if first:
                 first = False
-                beginTime = getHourlyChime(convertDate(row['datetime']))
+                beginTime = getHalfHourlyChime(convertDate(row['datetime']))
                 lastDay = getDay(row['datetime'])
                 lastWeekType = getWeekType(beginTime)
             date = row['datetime']
-            now = getHourlyChime(convertDate(date))
+            now = getHalfHourlyChime(convertDate(date))
             nowType =  getWeekType(convertDate(row['datetime']))
             id = row['cardno']
             staname = row['staname']
@@ -155,7 +173,7 @@ for year in range(2014, 2020):
             '''
            
             processHourlyStation(StationDict, stationId, now, row['inout'])
-            if now-beginTime >= ONEHOURTIME:
+            if now-beginTime >= HALFHOURTIME:
                 inputStationData(StationDict,StationList, beginTime, now)
                 beginTime = now
                 initDict(StationDict)

@@ -22,11 +22,14 @@ for i in range(0, 4):
     fourStationList.append(stationList)
     fourStationDict.append(stationDict)
 
+
 stationNameList = ['0146','0145','0144','0102','0103','0104','0143','0105','0106','0107','0108','0109','0110','0111','0112','0113','0114','0115','0116','0117','0118','0119','0120','0121','0122','0123','0124','0125','0126','0140','0141','0142','0224','0225','0226','0227','0228','0230','0231','0232','0233','0234','0235','0236','0237','0238','0239','0240','0241','0242','0243','0244','0245','0246','0247','0248','0249','0250','0251','0252','0253','0254','0255','0257','0258','0259','0260','0261','0331','0332','0333','0334','0335','0336','0337','0338','0340','0341','0342','0343','0344','0345','0346','0347','0348','0349','0350','0351','0352','0353','0354','0422','0423','0424','0425','0426','0427','0428','0429','0430','0431','0432','0433','0434','0435','0436','0437','0438','0439','0440','0441','0442','0443','0444','0445','0448','0449','0450','0451','0452','0453','0454','0455','0456','0457','0458','0631','0632','0633','0634','0635','0636','0637','0638','0639','0641','0642','0643','0644','0645','0646','0647','0648','0649','0650','0651','0652','0653','0654','0655','0656','0657','0731','0732','0733','0734','0735','0736','0737','0738','0739','0740','0741','0742','0743','0744','0745','0746','0747','0748','0749','0750','0751','0752','0753','0754','0755','0756','0831','0832','0833','0834','0835','0836','0837','0838','0839','0840','0841','0842','0854','0855','0856','1140','1141','1142','1143','1144','1145','1146','1147','1148','1149','1150','1151','1152','2131','2132','2133','2134','2135','2136','2137','2138','2139','2140','2141','2142','2143','2144','2145','2146']
 ONEHOUREND = datetime.strptime("2020010101000", '%Y%m%d%H%M%S')
+HALFHOUREND = datetime.strptime("2020010100300", '%Y%m%d%H%M%S')
 ONEHOURBEGIN = datetime.strptime("2020010100000", '%Y%m%d%H%M%S')
 ONEHOURTIME = ONEHOUREND-ONEHOURBEGIN
-print(ONEHOURTIME)
+HALFHOURTIME = HALFHOUREND-ONEHOURBEGIN
+print(HALFHOURTIME)
 
 for i in range(0, 4):
     fourNomalDict.append(dict())
@@ -51,6 +54,24 @@ def getHourlyChime(dt, step=0):
     td = timedelta(days=0, seconds=dt.second, microseconds=dt.microsecond, milliseconds=0, minutes=dt.minute, hours=-step, weeks=0)
     new_dt = dt - td
     return new_dt
+
+def getHalfHourlyChime(dt, step=0):
+    """
+    计算整小时的时间
+    :param step: 往前或往后跳跃取整值，默认为0，即当前所在的时间，正数为往后，负数往前。
+                例如：
+                step = 0 时 2019-04-11 17:38:21.869993 取整秒后为 2019-04-11 17:38:21
+                step = 1 时 2019-04-11 17:38:21.869993 取整秒后为 2019-04-11 17:38:22
+                step = -1 时 2019-04-11 17:38:21.869993 取整秒后为 2019-04-11 17:38:20
+    :return: 整理后的时间戳
+    """
+    # 整小时
+    td = timedelta(days=0, seconds=dt.second, microseconds=dt.microsecond, milliseconds=0, minutes=dt.minute, hours=-step, weeks=0)
+    new_dt = dt - td
+    if dt-new_dt >= HALFHOURTIME:
+        return new_dt+HALFHOURTIME
+    else:
+        return new_dt
 
 def initDict(fourStationDict):
     for people in fourStationDict:
@@ -225,15 +246,15 @@ for year in range(2014, 2020):
         for row in csv_reader:
             if first:
                 first = False
-                beginTime = getHourlyChime(convertDate(row['datetime']))
+                beginTime = getHalfHourlyChime(convertDate(row['datetime']))
                 initDict(fourStationDict)
-            now =  getHourlyChime(convertDate(row['datetime']))
+            now =  getHalfHourlyChime(convertDate(row['datetime']))
             id = row['cardno']
             type = getPeopleType(row['cardsort'])
             stationId = row['staname']
             handleNull(id, allDict)
             handleStationNull(stationId, getStationDict(0, now))
-            if now-beginTime >= ONEHOURTIME:
+            if now-beginTime >= HALFHOURTIME:
                 inputStationData(fourStationDict, fourStationList, beginTime, now)
                 beginTime = now
                 initDict(fourStationDict)
