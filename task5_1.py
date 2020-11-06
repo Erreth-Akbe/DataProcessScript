@@ -123,9 +123,9 @@ def inputStationData(StationDict,StationList, beginTime, now):
         tmp = []
         tmp.append(beginTime)
         tmp.append(now)
-        for station in dic:
-            tmp.append(station[0])
-            tmp.append(station[1])
+        for stationKey in dic:
+            tmp.append(dic[stationKey][0])
+            tmp.append(dic[stationKey][1])
             #print(tmp)
         tables.append(tmp)
 
@@ -144,7 +144,7 @@ for year in range(2014, 2020):
     filename = "en_ex_"
     filename += str(year)
     filename += "03.csv"
-    with open("./sortedTestData/"+filename, mode='r') as csv_tmp:
+    with open("./sortedData/"+filename, mode='r') as csv_tmp:
         csv_reader = csv.DictReader(csv_tmp,fieldnames=['cardno','payno','datetime','line','staname','inout','cardsort','datetimein','linein','stain'])
         for row in csv_reader:
             if first:

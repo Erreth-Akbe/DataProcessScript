@@ -1,1 +1,0 @@
-and getInverseHashAB(stain, staname) in isworkmorning[id] and isworkmorning[id][getInverseHashAB(stain, staname)]

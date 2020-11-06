@@ -222,9 +222,10 @@ def inputStationData(fourStationDict, fourStationList, beginTime, now):
             tmp = []
             tmp.append(beginTime)
             tmp.append(now)
-            for station in dic:
-                tmp.append(station[0])
-                tmp.append(station[1])
+            for stationKey in dic:
+                tmp.append(dic[stationKey][0])
+                tmp.append(dic[stationKey][1])
+            #print(tmp)
             #print(tmp)
             tables.append(tmp)
 

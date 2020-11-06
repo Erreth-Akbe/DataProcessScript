@@ -14,7 +14,7 @@ for i in range(0, 6):
         for row in csv_reader:
             tmp.append(row)
             lines += 1
-            if lines > 1000000: 
+            if lines > 100: 
                 break
         csv_tmp.close()
     files.append(tmp)
