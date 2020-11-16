@@ -292,7 +292,7 @@ for year in range(2014, 2020):
         for key in getAdvanceDict(j):
             tables = getAdvanceDict(j)[key]
             filename = pathName5+getIsChangeName(tables)+str(year)+".csv";
-            with open(filename, mode='w',newline='') as csv_to_write:
+            with open(filename, mode='a+',newline='') as csv_to_write:
                 csv_writter = csv.writer(csv_to_write, delimiter=',')
                 for row in tables:
                     csv_writter.writerow(row)
