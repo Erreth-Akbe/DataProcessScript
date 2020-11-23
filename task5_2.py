@@ -62,12 +62,13 @@ def getHalfHourlyChime(dt, step=0):
         return new_dt+HALFHOURTIME
     else:
         return new_dt
-def initDict(StationDict):
-    for people in StationDict:
-        for week in StationDict[people]:
+
+
+def initDict(wrokManStationDict):
+    for week in wrokManStationDict:
             for station in week:
-                for inout in station:
-                    inout = 0
+                week[station][0] = 0
+                week[station][1] = 0
 
 def getPeopleType(cardsort):
     return cardsort

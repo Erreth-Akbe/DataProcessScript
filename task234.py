@@ -267,7 +267,7 @@ for year in range(2014, 2020):
                 handleStationNull(stationId, getStationDict(type, now))
                 processHourlyStation(fourStationDict, stationId, now, row['inout'], type)
                 inputNomalData(getNomalDict(type)[id], row['cardno'], row['datetime'], row['line'], row['staname'], row['inout'], row['cardsort'])
-                if row['stain'] != '':
+                if row['stain'] != '' and row['datetime'] != row['datetimein']:
                     inputAdvanceData(getAdvanceDict(type)[id], row['cardno'],  row['datetime'], row['staname'], row['line'], 
                                         row['datetimein'], row['stain'], row['linein'], int(row['datetime'])-int(row['datetimein']), row['cardsort'])
             

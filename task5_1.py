@@ -28,8 +28,8 @@ print(HALFHOURTIME)
 def initDict(wrokManStationDict):
     for week in wrokManStationDict:
             for station in week:
-                for inout in station:
-                    inout = 0
+                week[station][0] = 0
+                week[station][1] = 0
 def getDay(date):
     return date[0:8]
 
@@ -144,7 +144,7 @@ for year in range(2014, 2020):
     filename = "en_ex_"
     filename += str(year)
     filename += "03.csv"
-    with open("./sortedData/"+filename, mode='r') as csv_tmp:
+    with open("./sortedTestData/"+filename, mode='r') as csv_tmp:
         csv_reader = csv.DictReader(csv_tmp,fieldnames=['cardno','payno','datetime','line','staname','inout','cardsort','datetimein','linein','stain'])
         for row in csv_reader:
             if first:
@@ -173,6 +173,8 @@ for year in range(2014, 2020):
            
             if now-beginTime >= HALFHOURTIME:
                 inputStationData(StationDict,StationList, beginTime, now)
+                print("now:"+str(now))
+                print("beginTime:"+str(beginTime))
                 beginTime = now
                 initDict(StationDict)
         csv_tmp.close()

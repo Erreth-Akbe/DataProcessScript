@@ -68,8 +68,8 @@ def initisWorkME(isworkM):
 def initDict(wrokManStationDict):
     for week in wrokManStationDict:
             for station in week:
-                for inout in station:
-                    inout = 0
+                week[station][0] = 0
+                week[station][1] = 0
 def getDay(date):
     return date[0:8]
 
@@ -370,7 +370,7 @@ for year in range(2014, 2020):
             if nowType == 1:
                 timeType = 2
 #            print(row)
-            if stain == '':
+            if stain == '' or  row['datetime'] != row['datetimein']:
                 continue
             '''
             if id in isWorkMorning:
