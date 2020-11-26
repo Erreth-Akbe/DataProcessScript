@@ -225,6 +225,8 @@ def processHourlyStation(workManStationDict, id, now, inout):
 
 
 def inputAdvanceData(tables, cardno, homePlace, workPlace,  cardsort, morningin, morningout, datein,  dateout):
+    if homePlace == workPlace:
+        return
     tmp = []
     tmp.append(cardno)
     tmp.append(homePlace)
@@ -370,7 +372,7 @@ for year in range(2014, 2020):
             if nowType == 1:
                 timeType = 2
 #            print(row)
-            if stain == '' or  row['datetime'] != row['datetimein']:
+            if stain == '' or  row['datetime'] == row['datetimein']:
                 continue
             '''
             if id in isWorkMorning:
@@ -480,7 +482,7 @@ for j in range(0, 2):
     pathName3 = "./data/out/workman/"+getWeekName(j)+"/"
     if os.path.isdir(pathName3) == False:
         os.mkdir(pathName3)
-    with open(pathName3+filename, mode='w', newline='') as csv_tmp:
+    with open(pathName3+filename, mode='a+', newline='') as csv_tmp:
         csv_writter = csv.writer(csv_tmp, delimiter=',')
         firstRow = [ 'beginTime', 'endTime']
         for key in workManStationDict[j]:

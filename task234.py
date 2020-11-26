@@ -73,12 +73,12 @@ def getHalfHourlyChime(dt, step=0):
     else:
         return new_dt
 
-def initDict(fourStationDict):
-    for people in fourStationDict:
+def initDict(wrokManStationDict):
+    for people in wrokManStationDict:
         for week in people:
-            for station in week:
-                for inout in station:
-                    inout = 0
+                for station in week:
+                    week[station][0] = 0
+                    week[station][1] = 0
 
 def getPeopleType(cardsort):
     if cardsort == 0:
