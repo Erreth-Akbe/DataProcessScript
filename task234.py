@@ -267,7 +267,7 @@ for year in range(2014, 2020):
                 handleStationNull(stationId, getStationDict(type, now))
                 processHourlyStation(fourStationDict, stationId, now, row['inout'], type)
                 inputNomalData(getNomalDict(type)[id], row['cardno'], row['datetime'], row['line'], row['staname'], row['inout'], row['cardsort'])
-                if row['stain'] != '' and row['datetime'] != row['datetimein']:
+                if row['stain'] != '' :
                     inputAdvanceData(getAdvanceDict(type)[id], row['cardno'],  row['datetime'], row['staname'], row['line'], 
                                         row['datetimein'], row['stain'], row['linein'], int(row['datetime'])-int(row['datetimein']), row['cardsort'])
             
@@ -281,8 +281,8 @@ for year in range(2014, 2020):
             csv_writter = csv.writer(csv_to_write, delimiter=',')
             firstRow = [ 'cardno', 'datetime', 'staname', 'line', 'datetimein', 'stain', 'linein', 'gap', 'cardsort']
             csv_writter.writerow(firstRow)
-            for key in getAdvanceDict(i):
-                tables = getAdvanceDict(i)[key]
+            for key in getAdvanceDict(j):
+                tables = getAdvanceDict(j)[key]
                 for row in tables:
                     csv_writter.writerow(row)
             csv_to_write.close()

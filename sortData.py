@@ -54,7 +54,7 @@ for year in range(2014, 2020):
     filename = "en_ex_"
     filename += str(year)
     filename += "03.csv"
-    with open("./data/"+filename, mode='r',newline='') as csv_tmp:
+    with open("./processedData/"+filename, mode='r',newline='') as csv_tmp:
         csv_reader = csv.reader(csv_tmp)
         for row in csv_reader:
             dataList.append(row)

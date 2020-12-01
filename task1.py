@@ -348,6 +348,9 @@ lastDay = getDay('20140317055456')
 beginTime = convertDate('20140317055456')
 lastWeekType = getWeekType(beginTime)
 first = True
+
+
+
 for year in range(2014, 2020):
     filename = "en_ex_"
     filename += str(year)
@@ -372,7 +375,7 @@ for year in range(2014, 2020):
             if nowType == 1:
                 timeType = 2
 #            print(row)
-            if stain == '' or  row['datetime'] == row['datetimein']:
+            if stain == '':
                 continue
             '''
             if id in isWorkMorning:
@@ -406,13 +409,12 @@ for year in range(2014, 2020):
                     handleNull(id, workManAdvanceDict)
                     inputAdvanceData(workManAdvanceDict[id], row['cardno'], homePlace, workPlace,  row['cardsort'], morningin, morningout, row['datetimein'],  row['datetime'])
                     processHourlyStation(workManStationDict, stationId, now, row['inout'])
-                    
             if isChangeDay(date, lastDay):
                 print("changeDay")
                 changeDay(isWorkToday, timesInOneWeek, isWorkMorning, workManMoringData)
             if isChangeWeek(now, lastWeekType):
                 print("changeweek")
-                changeWeek(timesInOneWeek, isWorkMan)
+                changeWeek(timesInOneWeek, isWorkMan)    
             if now-beginTime >= HALFHOURTIME:
                     inputStationData(workManStationDict, workManStationList, beginTime, now)
                     beginTime = now
@@ -469,6 +471,61 @@ with open("./data/out/workman/"+filename, mode='w',newline='') as csv_tmp:
             tables = workManNormalDict[key]
             for row in tables:
                 csv_writter.writerow(row)
+        
+  
+
+lastDay = getDay('20140317055456')
+beginTime = convertDate('20140317055456')
+lastWeekType = getWeekType(beginTime)
+first = True
+
+for year in range(2014, 2020):
+    filename = "en_ex_"
+    filename += str(year)
+    filename += "03.csv"
+    with open("./sortedData/"+filename, mode='r') as csv_tmp:
+        csv_reader = csv.DictReader(csv_tmp,fieldnames=['cardno','payno','datetime','line','staname','inout','cardsort','datetimein','linein','stain'])
+        
+        for row in csv_reader:
+            if first:
+                first = False
+                beginTime = getHalfHourlyChime(convertDate(row['datetime']))
+            date = row['datetime']
+            now =  getHalfHourlyChime(convertDate(row['datetime']))
+            nowType =  getWeekType(convertDate(row['datetime']))
+            id = row['cardno']
+            staname = row['staname']
+            stain = row['stain']
+            timeType = isWorkTime(date)
+            stationId = row['staname']
+            if nowType == 1:
+                timeType = 2
+#            print(row)
+            '''
+            if id in isWorkMorning:
+                print("id in")
+                print(date)
+                print(timeType)
+
+            if timeType == 1:
+                print(date)
+            '''
+            if (timeType == 1 or timeType == 0) and id in isWorkMan and isWorkMan[id] == True:
+                    #print("hit")
+                    processHourlyStation(workManStationDict, stationId, now, row['inout'])
+                    
+            
+            if now-beginTime >= HALFHOURTIME:
+                    inputStationData(workManStationDict, workManStationList, beginTime, now)
+                    beginTime = now
+                    initDict(workManStationDict)
+        csv_tmp.close()
+
+   
+
+
+print("----------load finish---------")
+
         
   
 
